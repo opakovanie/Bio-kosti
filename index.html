@@ -302,8 +302,7 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in var(--t2
 
 /* ---- Region ---- */
 .k-region { --k-appbar: calc(var(--appbar-h) + env(safe-area-inset-top, 0px)); overflow-anchor: none; }
-.k-vis { position: sticky; top: var(--k-appbar); z-index: 30; height: 36vh; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: var(--plate); border: 1px solid var(--rule); border-radius: var(--r-2); overflow: hidden; transition: height var(--t2) var(--ease-out); }
-.k-vis.small { height: 24vh; }
+.k-vis { height: 36vh; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: var(--plate); border: 1px solid var(--rule); border-radius: var(--r-2); overflow: hidden; }
 .k-stage { position: relative; overflow: hidden; min-height: 0; }
 .k-cap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--s3); padding: 0 var(--s3); min-height: 44px; border-top: 1px solid var(--rule); }
 .k-cap .cap-link { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--f-mono); font-size: var(--fs-meta); font-weight: 500; }
@@ -338,7 +337,7 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in var(--t2
 .k-gnote { margin: var(--s3) 0 var(--s2); font-size: var(--fs-small); color: var(--ink-2); }
 
 .k-rows { border-top: 1px solid var(--rule); }
-.k-bone { border-bottom: 1px solid var(--rule); scroll-margin-top: calc(var(--k-appbar) + 24vh + 12px); }
+.k-bone { border-bottom: 1px solid var(--rule); scroll-margin-top: calc(var(--k-appbar) + 12px); }
 .k-brow { display: flex; align-items: flex-start; gap: var(--s1); min-height: 60px; transition: background var(--t2); }
 .k-bone[data-open="true"] .k-brow { background: var(--pigment-soft); margin-inline: calc(-1 * var(--s2)); padding-inline: var(--s2); border-radius: var(--r-1); }
 .k-main { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: var(--s3); min-height: 60px; padding: var(--s3) 0; text-align: left; }
@@ -377,10 +376,10 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in var(--t2
 .b2 .mk { border: 2px solid var(--pigment-2); background: var(--plate); }
 .b3 .mk { border: 2px dotted var(--pigment-2); border-radius: 50%; }
 
-/* desktop: visual left (sticky), list right */
+/* desktop: visual left, list right */
 @media (min-width: 900px) {
   .k-region { display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); gap: var(--s7); align-items: start; }
-  .k-vis, .k-vis.small { top: 72px; height: min(calc(100vh - 96px), 780px); }
+  .k-vis { height: min(calc(100vh - 96px), 780px); }
   .k-body { padding-top: 0; }
   .scr-kostra.k-region .k-h1 { display: block; }
   .k-seg { width: auto; display: inline-grid; grid-template-columns: none; margin-top: var(--s5); }
@@ -2398,10 +2397,6 @@ const Diagrams = (() => {
         Bus.on('progress', refresh);
         $('.k-prac', root).addEventListener('click', () => { App.state.cardFilter = id; Router.go('#karticky'); });
 
-        /* ---- sticky panel: shrink once the list scrolls under it ---- */
-        let small = false;
-        const onScroll = () => { if (!root.isConnected) { removeEventListener('scroll', onScroll); return; } if (isDesk()) { if (small) { small = false; vis.classList.remove('small'); } return; } const y = scrollY, next = small ? y > 20 : y > 90; if (next !== small) { small = next; vis.classList.toggle('small', small); } };
-        addEventListener('scroll', onScroll, { passive: true });
         const syncVar = () => root.style.setProperty('--k-vis-h', vis.offsetHeight + 'px');
         new ResizeObserver(() => { syncVar(); if (skull) placeZoom(false); else if (!openId) svg.setAttribute('viewBox', (svg._vb = regionBox).join(' ')); else { svg._vb = targetBox(byId.get(openId)); svg.setAttribute('viewBox', svg._vb.join(' ')); } }).observe(stage);
         syncVar();
